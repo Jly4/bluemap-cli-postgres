@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: jly4/bluemap-postgres:latest
+    container_name: bluemap-postgres
+    environment:
+      POSTGRES_USER: bluemap
+      POSTGRES_DB: bluemap_db
+      POSTGRES_PASSWORD: bluemap
+      POSTGRES_MULTIPLE_DATABASES: #bluemap_world1_db,bluemap_world2_db
+    ports:
+      #- "127.0.0.1:5432:5432"
+    volumes:
+      - ./pgsql_data:/var/lib/postgresql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bluemap -d bluemap_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  bluemap:
+    container_name: bluemap-app
+    image: jly4/bluemap-cli-postgres:latest
+    command: ["-g", "-w"]
+    ports:
+      - "8100:8100"
+    volumes:
+      - ./config:/app/config
+      - ./data:/app/data
+      - ./world:/app/world
+      - ./mods:/app/mods
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy

@@ -1,0 +1,15 @@
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/*
+.history
+!.vscode/extensions.json
+
+help
+logs/
+tmp/
+temp/
+*.sql
+*.dump
+
